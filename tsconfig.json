@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "common-components/BuyNow_ui.tsx", "common-components/4.skin/Product_section_ui.tsx", "common-components/4.skin/Model_dropdown_ui.tsx", "app/account/orders/page.jsx", "custom-hook/use-http_wite.js", "app/account/checkout/page.jsx", "app/customSkinProductDetail/[id]/page.tsx", "custom-hook/useInputValidation.js", "common-components/5.orders/EditAddress_ui.jsx"],
+  "exclude": ["node_modules"]
+}
