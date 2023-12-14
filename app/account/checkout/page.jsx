@@ -9,24 +9,22 @@ import useSWR from "swr";
 import EditAddress_ui from "@/common-components/5.orders/EditAddress_ui";
 import { load } from "@cashfreepayments/cashfree-js";
 import axios from "axios";
+import Loading_spinner_ui from "@/common-components/Loading_spinner_ui";
+import Error_ui from "@/common-components/Eroor_ui";
 
 // ----------------------------------------------
 const Checkout = () => {
+  const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
   // auth----------
   const [userAuth, setUserAuth] = useState("");
   useEffect(() => {
     onAuthStateChanged(auth, (user) => user && setUserAuth(user));
   }, [userAuth]);
   // --------------
-  const { data: shippingInfo, mutate } = useSWR(`noava/users/${userAuth.uid}/shippingInfo`, fetcher, {
-    revalidateIfStale: false,
-    revalidateOnMount: false,
-  });
+  const { data: shippingInfo } = useSWR(`noava/users/${userAuth.uid}/shippingInfo`, fetcher);
 
-  const { data: orderInfo } = useSWR(`noava/users/${userAuth.uid}/buyNow`, fetcher, {
-    revalidateIfStale: false,
-    revalidateOnMount: false,
-  });
+  const { data: orderInfo } = useSWR(`noava/users/${userAuth.uid}/buyNow`, fetcher);
 
   // -------------------------------------------------------------
   const [editAddress, setEditAddress] = useState(false);
@@ -49,20 +47,25 @@ const Checkout = () => {
   }, []);
 
   const buyNow = async () => {
-    if (!cashfree && !orderInfo && !data) return;
+    if (!cashfree && !orderInfo && !shippingInfo) return;
+    setLoading(true);
     const res = await axios.post("/api/checkout", {
       price: orderInfo?.price,
       email: shippingInfo?.email,
       whatsappNumber: shippingInfo?.whatsappNum,
+      customerId: userAuth?.uid,
+      orderId: orderInfo?.orderId,
     });
+
     const data = await res.data;
     const checkoutOptions = {
       paymentSessionId: data?.payment_session_id,
       returnUrl: data?.order_meta?.return_url,
     };
+
     cashfree.checkout(checkoutOptions).then(function (result) {
       if (result.error) {
-        alert(result.error.message);
+        setError(true);
       }
       if (result.redirect) {
         console.log("Redirection");
@@ -70,6 +73,18 @@ const Checkout = () => {
     });
   };
   // -------------------------------------------------------------
+
+  if (!shippingInfo || !orderInfo) {
+    return <Loading_spinner_ui label="Loading..." />;
+  }
+
+  if (isLoading) {
+    return <Loading_spinner_ui label="Loading..." />;
+  }
+
+  if (isError) {
+    return <Error_ui pageStatus_msg="Error occured" errorMessage="Something went wrong please try agin" />;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center space-y-4">
@@ -156,13 +171,14 @@ const Checkout = () => {
                 {/* ---------------------------- */}
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">&#8377;0</p>
+                  <p className="font-semibold text-gray-900">&#8377;50</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Total</p>
-                <p className="text-2xl font-semibold text-gray-900">&#8377;{orderInfo?.price}</p>
+                <p className="text-2xl font-semibold text-gray-900">&#8377;{Number(orderInfo?.price) + 50}</p>
               </div>
+              <span className="text-sm text-green-700 font-semi-bold block pt-4">* The estimated time of delivery is 2 or 4 working days</span>
               <span className="text-sm block pt-4">* Tax included and shipping calculated at checkout</span>
             </div>
           </div>

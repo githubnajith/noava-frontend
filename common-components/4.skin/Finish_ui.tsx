@@ -45,7 +45,7 @@ const Finish_ui = (props: any) => {
           Object.keys(skin_finish).map((key, index) => {
             return (
               <>
-                <img key={key} className={`rounded-full w-[70px] ring ring-white ${index === outline && "outline  outline-black"}`} alt="skins and wraps" src={skin_finish[key]?.image?.imageUrl} onClick={finishClick(skin_finish[key]?.inputData?.finishName, skin_finish[key]?.inputData?.withoutCoverPrice, skin_finish[key]?.inputData?.withCoverPrice, index)} />
+                <img loading="lazy" key={key} className={`rounded-full w-[70px] ring ring-white ${index === outline && "outline  outline-black"}`} alt="skins and wraps" src={skin_finish[key]?.image?.imageUrl} onClick={finishClick(skin_finish[key]?.inputData?.finishName, skin_finish[key]?.inputData?.withoutCoverPrice, skin_finish[key]?.inputData?.withCoverPrice, index)} />
               </>
             );
           })}

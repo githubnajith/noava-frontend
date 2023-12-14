@@ -1,5 +1,4 @@
 import {fetchData} from '@/util/1.fetch_data';
-import Subcategory_card_ui from '@/common-components/Subcategory_card_ui';
 import Category_card_ui from '@/common-components/Category_card_ui';
 // ----------------------------------------------
 interface Params {
@@ -14,7 +13,7 @@ export default async function SkinSubcategory({params}: Params) {
   // ------------------------------
   // 2.fetch subcategory data
   const subcategory_baseUrl = `noava/products/skins/subcategory/${params?.maincat_id}/title`;
-  const subcat_data = await fetchData(subcategory_baseUrl);
+  const subcat_data = await fetchData(subcategory_baseUrl);  
   // ------------------------------
   return (
     <main className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8 px-4 py-2'>
@@ -46,12 +45,12 @@ export default async function SkinSubcategory({params}: Params) {
 }
 
 // --------------
-export const generateStaticParams = async () => {
-  const baseUrl = `noava/products/skins/maincategory/title`;
-  const data = await fetchData(baseUrl);
-  return Object.keys(data).map((key) => {
-    {
-      maincat_id: key.toString();
-    }
-  });
-};
+// export const generateStaticParams = async () => {
+//   const baseUrl = `noava/products/skins/maincategory/title`;
+//   const data = await fetchData(baseUrl);
+//   return Object.keys(data).map((key) => {
+//     {
+//       maincat_id: key.toString();
+//     }
+//   });
+// };

@@ -12,13 +12,17 @@ import Upload_image from "./Upload_image";
 import useGetState from "@/custom-hook/skin/use_getState";
 // ---------------------------------------------
 
-const Product_section_ui = ({ skindata, common_data, getAuthState, userUid,customSkin }: any) => {
+const Product_section_ui = ({ skindata, common_data, getAuthState, userUid, customSkin, upload_state, loading_state }: any) => {
   const deviceType = common_data?.deviceType?.type;
   const skin_finish = common_data?.finish;
   const product_price = skindata?.inputData?.price;
   const model = common_data?.modelDropdown;
   // ?------------------------------------------------------------------------------------------------------------------
   const [finalPrice, setFinalprice] = useState(product_price);
+
+  useEffect(() => {
+    setFinalprice(product_price);
+  }, [skindata]);
 
   // -----------------------------------------------------------------------------------------------------
   // sidecover
@@ -30,12 +34,10 @@ const Product_section_ui = ({ skindata, common_data, getAuthState, userUid,custo
 
   // hide sidecover on no sides select
   const { getStateLift: getNosideCover, getState: noSidecover } = useGetState(true);
-
   useEffect(() => {
     if (noSidecover) return;
     setFinalprice(withoutcover_price);
   }, [noSidecover]);
-
   // -----------------------------------------------------------------------------------------------------
   // brand and model
   const { getStateLift: getBrandName, getState: brandName } = useGetState(null);
@@ -61,16 +63,18 @@ const Product_section_ui = ({ skindata, common_data, getAuthState, userUid,custo
   }, [laptopCover]);
   // -----------------------
   // get custom image
-  const {getStateLift:getCustomImg,getState:customImage} = useGetState(null)
+  const { getStateLift: getCustomImg, getState: customImage } = useGetState(null);
   // -------------
+  // get apple
+  const {getStateLift:getApple,getState:logocut_apple} = useGetState(false);
   // logocut
   const { getStateLift: getLogocut, getState: logocut } = useGetState(false);
+
   //   ------------------------------------------------------------------------------------
 
   // product info for order
   const orderInfo = {
     name: skindata?.inputData?.name,
-    imageName: skindata?.image?.imageName,
     imageUrl: skindata?.image?.imageUrl,
     price: finalPrice,
     orderTime: new Date().toLocaleString(),
@@ -78,8 +82,7 @@ const Product_section_ui = ({ skindata, common_data, getAuthState, userUid,custo
     ...(modelName && { modelName: modelName }),
     ...(mobileCover && { sideCover: mobileCover }),
     ...(logocut && { logocut: logocut }),
-    ...(finishName && { finish: finishName }),
-    // ...(customImage && {customImage:customImage})
+    // ...(finishName && { finish: finishName }),
   };
 
   // -----------------------------------------------------------------------
@@ -99,20 +102,26 @@ const Product_section_ui = ({ skindata, common_data, getAuthState, userUid,custo
           </div>
           {/* ----------------------------------------------------- */}
           {/* choose brand and model */}
-          {model && <Model_dropdown_ui model={model} getBrandName={getBrandName} getModelName={getModelName} getLogocut={getLogocut} getNosideCover={getNosideCover} />}
+          {model && <Model_dropdown_ui model={model} getBrandName={getBrandName} getModelName={getModelName} getApple={getApple} getNosideCover={getNosideCover} />}
           {/* logocut ---------------- */}
-          {logocut && <Logocut_ui getLogocut={getLogocut} />}
+          <div className={`${logocut_apple ? "block" : "hidden"}`}>
+            <Logocut_ui getLogocut={getLogocut} />
+          </div>
           {/* side cover ------------- */}
-          {deviceType === "phone" && <Sidecover_ui getSidecover_state={mobilecover_state} deviceType={deviceType} noSidecover={noSidecover} />}
-          {deviceType === "laptop" && <Sidecover_ui getSidecover_state={laptopcover_state} deviceType={deviceType} noSidecover={true} />}
+          {modelName && (
+            <div>
+              {deviceType === "phone" && <Sidecover_ui getSidecover_state={mobilecover_state} deviceType={deviceType} noSidecover={noSidecover} />}
+              {deviceType === "laptop" && <Sidecover_ui getSidecover_state={laptopcover_state} deviceType={deviceType} noSidecover={true} />}
+            </div>
+          )}
           {/* finish ----------------- */}
-          {skin_finish && <Finish_ui finish={skin_finish} get_withoutCover_price={get_withoutCover_price} get_withcover_price={get_withcover_price} getFinishName={getFinishName} />}
+          <div className="hidden">{skin_finish && <Finish_ui finish={skin_finish} get_withoutCover_price={get_withoutCover_price} get_withcover_price={get_withcover_price} getFinishName={getFinishName} />}</div>
           {/* ----------------------------------------------------- */}
           {/* upload image */}
-          {customSkin &&  <Upload_image getCustomImg={getCustomImg} />}
+          {customSkin && <Upload_image getCustomImg={getCustomImg} />}
           {/* ----------------------------------------------------- */}
           <div className="flex items-center justify-between py-3">
-            <BuyNow_ui getAuthState={getAuthState} orderInfo={orderInfo} userUid={userUid} model={model && true} />
+            <BuyNow_ui customSkin={customSkin} loading_state={loading_state} upload_state={upload_state} getAuthState={getAuthState} orderInfo={orderInfo} customImage={customImage} userUid={userUid} model={model && true} />
           </div>
         </div>
       </main>

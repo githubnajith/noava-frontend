@@ -8,6 +8,9 @@ import useSWR from "swr";
 import Login_ui from "@/common-components/5.orders/Login_ui";
 import { useEffect, useState } from "react";
 import { useUserAuth } from "@/custom-hook/use_user_auth";
+import Loading_spinner_ui from "@/common-components/Loading_spinner_ui";
+// custom hook
+import useGetState from "@/custom-hook/skin/use_getState";
 // ------------------------------------
 interface Params {
   params: {
@@ -24,9 +27,13 @@ export default function Page({ params }: Params) {
   const { data: skindata } = useSWR(baseUrl, fetcher);
   const { data: common_data } = useSWR(commonUrl, fetcher);
 
+  // get uploading state
+  const { getStateLift: loading_state, getState: loading } = useGetState(false);
+
   // ---------------------------------
   const [showLogin, setShowLogin] = useState<boolean>(false);
   const { userUid } = useUserAuth();
+  
   const getAuthState = (userState: boolean) => {
     if (userUid) return;
     setShowLogin(userState);
@@ -40,16 +47,21 @@ export default function Page({ params }: Params) {
     if (!userUid) return;
     setShowLogin(false);
   }, [userUid]);
+  
   // -------------------------------------------------
   return (
     <>
       <div className={showLogin ? "hidden" : "block"}>
         {/* 1.whats app icon ----------------------------- */}
         <Whatsapp_icon_ui />
+        {/* loading spinner ------------------------------ */}
+        {loading && <Loading_spinner_ui label="Loading" />}
         {/* 2.product section ---------------------------- */}
-        {skindata && <Product_section_ui skindata={skindata} common_data={common_data} getAuthState={getAuthState} userUid={userUid} />}
-        {/* 3.product description */}
-        <Skin_description_ui />
+        <div className={`${!loading ? "block" : "hidden"}`}>
+          {skindata && <Product_section_ui loading_state={loading_state} skindata={skindata} common_data={common_data} getAuthState={getAuthState} userUid={userUid} />}
+          {/* 3.product description */}
+          <Skin_description_ui />
+        </div>
       </div>
       {/* ---------------------------------------------- */}
       {/* login ui */}

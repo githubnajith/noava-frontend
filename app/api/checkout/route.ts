@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
+// -----------------------------------------------------------------------
 
 const TEST_ENV = {
   client_id: "TEST1002125582e08172c88e6b2e372c55212001",
@@ -14,8 +15,11 @@ const PRODUCTION_ENV = {
 };
 
 export async function POST(request: Request) {
-  const { price, email, whatsappNumber } = await request.json();
+  const { price, email, whatsappNumber, customerId, orderId } = await request.json();
 
+  const productPrice = Number(price) + 50;
+
+  if (!orderId) return;
   const options = {
     method: "POST",
     url: PRODUCTION_ENV.url,
@@ -28,14 +32,16 @@ export async function POST(request: Request) {
     },
     data: {
       customer_details: {
-        customer_id: "7112AAA812234",
+        customer_id: customerId,
         customer_phone: whatsappNumber,
         customer_email: email,
       },
-      order_id: "2314",
-      order_meta: { return_url: `https://noava.in/account/payment-successfull/${21354}` },
-      order_amount: price,
-      // order_amount: 1,
+      order_id: orderId,
+      order_meta: {
+        return_url: `https://www.noava.in/account/payment-successfull/${orderId}`,
+        // return_url: `http://localhost:3000/account/payment-successfull/${orderId}`,
+      },
+      order_amount: productPrice,
       order_currency: "INR",
     },
   };

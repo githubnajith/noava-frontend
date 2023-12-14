@@ -3,8 +3,6 @@ import Hero from './components/1.Hero/Hero';
 import MobileImagePreview from './components/2.Custom-skin-preview/1.Mobile_img_preview';
 import CustomSkinDescription from './components/2.Custom-skin-preview/2.CustomSkinDescription';
 import ProductScroll from './components/3.Product-scroll/ProductScroll';
-import Rating_card from './components/4.Rating-card/Rating_card';
-import Testimonial_slider from './components/5.Testimonial-slider/Testimonial_slider';
 import About from './components/6.About/About';
 import Instagram_gallery from './components/7.Instagram-gallery/Instagram_gallery';
 import OurFeatures from './components/8.our-features/OurFeatures';
@@ -79,8 +77,6 @@ export default async function Home() {
           data={product_scroll_1}
         />
       )}
-      {/* ------------------------------------------- */}
-
       {/* ------------------------------------------- */}
       {/* About */}
       <Instagram_gallery />

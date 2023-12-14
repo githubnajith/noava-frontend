@@ -3,7 +3,6 @@
 "use client";
 // ----------------------------------------------
 const Model_dropdown_ui = (props: any) => {
-  const router = useRouter();
   // ----------------------------------------------------------------------
   const model = props.model;
   // models
@@ -51,13 +50,13 @@ const Model_dropdown_ui = (props: any) => {
   // -----------------------------
   // get apple
   useEffect(() => {
-    if (!props.getLogocut) return;
+    if (!props.getApple) return;
     if (!brandKey || brandKey === "Choose Brand") {
-      props.getLogocut(false);
+      props.getApple(false);
       return;
     }
-    if (model[brandKey].Brand === "Apple" || model[brandKey].Brand === "MacBook") props.getLogocut(true);
-    else props.getLogocut(false);
+    if (model[brandKey].Brand === "Apple" || model[brandKey].Brand === "MacBook") props.getApple(true);
+    else props.getApple(false);
   }, [brandKey]);
   // --------------------------------------------------------
   return (
@@ -122,5 +121,3 @@ const Model_dropdown_ui = (props: any) => {
 export default Model_dropdown_ui;
 // ---------------------------------------
 import React, { useEffect, useState } from "react";
-// firebase
-import { useRouter } from "next/navigation";
